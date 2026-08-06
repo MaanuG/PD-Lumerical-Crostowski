@@ -33,8 +33,7 @@ addpyramid;
 set('name','Ge'); #germanium
 set('material','Ge (Germanium) thin film 2um');
 set('override mesh order from material database',1); set('mesh order',2);
-set('x',x_center); set('x span bottom',ge_width_x_bottom); set('x span
-top',ge_width_x_top);
+set('x',x_center); set('x span bottom',ge_width_x_bottom); set('x span top',ge_width_x_top);
 set('y',ge_y); set('y span bottom',ge_width_y_bottom); set('y span top',ge_width_y_top);
 z_ge=(si_z+ge_thickness/2+si_1_thickness/2);
 set('z span',ge_thickness); set('z',z_ge);
@@ -42,10 +41,8 @@ addpyramid;
 set('name','cathode'); #Al
 set('material','Al (Aluminium) - CRC');
 set('override mesh order from material database',1); set('mesh order',2);
-set('x',x_center); set('x span bottom',contact_width_x_bottom); set('x span
-top',contact_width_x_top);
-set('y',contact_y); set('y span bottom',contact_width_y_bottom); set('y span
-top',contact_width_y_top);
+set('x',x_center); set('x span bottom',contact_width_x_bottom); set('x span top',contact_width_x_top);
+set('y',contact_y); set('y span bottom',contact_width_y_bottom); set('y span top',contact_width_y_top);
 z_pec=z_ge+ge_thickness/2+(4*contact_thickness)/2;
 set('z',z_pec); set('z span',4*contact_thickness);
 # draw simulation region
