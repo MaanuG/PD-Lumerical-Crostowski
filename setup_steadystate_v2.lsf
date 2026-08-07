@@ -1,0 +1,211 @@
+# Steady State electrical simulation of the detector
+
+# Modern CHARGE-compatible geometry setup
+
+newproject;
+redrawoff;
+
+# Add the CHARGE solver (required in newer Lumerical versions)
+addchargesolver;
+
+detector_setup_parameters;
+
+solver_mode = 1;
+
+#################################################
+# Geometry
+#################################################
+
+# oxide
+
+addrect;
+set("name","oxide");
+set("x",x_center);
+set("x span",oxide_width_x);
+set("y",y_center);
+set("y span",oxide_width_y);
+set("z",0);
+set("z span",oxide_thickness);
+
+# silicon layer 1
+
+addrect;
+set("name","silicon1");
+set("x",x_center);
+set("x span",si_1_width_x);
+set("y min",si_1_width_y_min);
+set("y max",si_1_width_y_max);
+set("z",si_z);
+set("z span",si_1_thickness);
+
+# silicon layer 2
+
+addrect;
+set("name","silicon2");
+set("x",x_center);
+set("x span",si_2_width_x);
+set("y min",si_2_width_y_min);
+set("y max",si_2_width_y_max);
+set("z",si_z);
+set("z span",si_2_thickness);
+
+# germanium absorber
+
+addpyramid;
+set("name","Ge");
+
+set("x",x_center);
+set("x span bottom",ge_width_x_bottom);
+set("x span top",ge_width_x_top);
+
+set("y",ge_y);
+set("y span bottom",ge_width_y_bottom);
+set("y span top",ge_width_y_top);
+
+z_ge = si_z + ge_thickness/2 + si_1_thickness/2;
+
+set("z",z_ge);
+set("z span",ge_thickness);
+
+# aluminum cathode
+
+addpyramid;
+set("name","cathode");
+
+set("x",x_center);
+set("x span bottom",contact_width_x_bottom);
+set("x span top",contact_width_x_top);
+
+set("y",contact_y);
+set("y span bottom",contact_width_y_bottom);
+set("y span top",contact_width_y_top);
+
+z_pec = z_ge + ge_thickness/2 + (4*contact_thickness)/2;
+
+set("z",z_pec);
+set("z span",4*contact_thickness);
+
+#################################################
+# DEVICE simulation region
+#################################################
+
+addsimulationregion;
+set("name","CHARGE simulation region");
+
+# Match the original detector (2D y-normal)
+set("dimension",2);
+
+# Region center
+set("x",x_center);
+set("y",y_center);
+set("z",(z_min_region+z_max_region)/2);
+
+# Region size
+set("x span",x_span);
+set("z span",z_max_region-z_min_region);
+
+# Link the region to the CHARGE solver
+setnamed("CHARGE","simulation region","CHARGE simulation region");
+
+#################################################
+# Optical generation
+#################################################
+
+# Commented temporarily because the .mat file is missing
+
+# addimportgen;
+# matlabload(generation_filename_responsivity);
+# igen = rectilineardataset(x,y,z);
+# igen.addparameter("v",0);
+# igen.addattribute("G",G);
+# importdataset(igen);
+
+#################################################
+# Doping
+#################################################
+
+adddope;
+
+set("name","pepi");
+set("dopant type","p");
+
+set("x",x_center);
+set("x span",x_span);
+
+set("y",y_center);
+set("y span",y_span);
+
+set("z",center_pepi);
+set("z span",thick_pepi);
+
+set("concentration",pepi_concentration);
+
+# p contact
+
+adddiffusion;
+
+set("name","p-");
+
+set("x",x_center_p_contact);
+set("x span",x_span_p_contact);
+
+set("y",y_center);
+set("y span",y_span);
+
+set("z",z_center_p_contact);
+set("z span",z_span_p_contact);
+
+set("dopant type","p");
+set("face type",face_p_contact);
+set("junction width",width_junction_p_contact);
+set("distribution index",diff_dist_fcn_contact);
+set("concentration",surface_conc_p_contact);
+set("ref concentration",reference_conc_p_contact);
+
+# n contact
+
+adddiffusion;
+
+set("name","n++");
+
+set("x",x_center_n_contact);
+set("x span",x_span_n_contact);
+
+set("y",y_center);
+set("y span",y_span);
+
+set("z",z_center_n_contact);
+set("z span",z_span_n_contact);
+
+set("dopant type","n");
+set("face type",face_n_contact);
+set("junction width",width_junction_n_contact);
+set("distribution index",diff_dist_fcn_contact);
+set("concentration",surface_conc_n_contact);
+set("ref concentration",reference_conc_n_contact);
+
+#################################################
+# Contacts
+#################################################
+
+#################################################
+# Electrical contacts
+#################################################
+
+# Anode
+addelectricalcontact;
+?set;
+set("name","anode");
+set("bc mode","steady state");
+set("surface type","solid");
+set("solid","silicon1");
+
+# Cathode
+addelectricalcontact;
+set("name","cathode");
+set("bc mode","steady state");
+set("surface type","solid");
+set("solid","cathode");
+set("voltage",0);
+
+save("vpd");
