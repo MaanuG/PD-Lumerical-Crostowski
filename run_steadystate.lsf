@@ -141,8 +141,10 @@ if (1) {
 
 switchtolayout;
 
-select("pulse");
-set("enabled",1);
+if (getnamednumber("pulse")>0) {
+    select("pulse");
+    set("enabled",1);
+}
 
 vmin=-0.2;
 vmax=2;
